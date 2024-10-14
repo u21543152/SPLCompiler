@@ -1,8 +1,10 @@
 main
 begin
-    num V_a;
+    text V_a;
     num V_y;
-    V_x := "Hello";
+    num V_x;
+    V_a := "Hello";
+    V_x := 10;
     V_y := V_x + 5;
 
     if V_x grt 5 then
