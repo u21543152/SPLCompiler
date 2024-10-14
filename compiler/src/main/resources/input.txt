@@ -1,0 +1,16 @@
+main
+begin
+    num V_a;
+    num V_y;
+    V_x := 10.2;
+    V_y := V_x + 5;
+
+    if V_x grt 5 then
+        print V_x;
+    else
+        print V_y;
+    end
+
+    F_sum(V_x, V_y, "Result");
+
+end
