@@ -22,7 +22,7 @@ public class RecSPLLexer {
     // Reserved keywords for RecSPL
     private static final Set<String> keywords = new HashSet<>(Arrays.asList(
             "main", "num", "text", "begin", "end", "skip", "halt", "print",
-            "input", "if", "then", "else", "not", "sprt", "eq", "grt", "and", "or",
+            "input", "if", "then", "else", "not", "sqrt", "eq", "grt", "and", "or",
             "add", "sub", "mul", "div", "return", "while", "for", "do", "void"
     ));
 
@@ -39,7 +39,7 @@ public class RecSPLLexer {
         this.length = input.length();
     }
 
-    public List<Token> tokenize() throws IOException {
+    public List<Token> tokenize() {
         while (pos < length) {
             char current = input.charAt(pos);
 

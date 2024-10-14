@@ -7,10 +7,10 @@
 
 2. **Running the Lexer**:
     - Compile and run the project using your preferred IDE (e.g., IntelliJ IDEA, Eclipse) or through the command line with Maven.
-    - The lexer will read the `input.txt` file, tokenize the contents, and output the tokens to an XML file.
+    - Execute the `RecSPLLexerTest` class, which will invoke the lexer on the `input.txt` file, tokenize the contents, and output the tokens to an XML file.
 
 3. **Output**:
-    - The tokens will be written to an XML file (e.g., `output.xml`) in the project root directory, which can then be used by the parser.
+    - The tokens will be written to an XML file (e.g., `lexerOutput.xml`) in the project root directory, which can then be used by the parser.
 
 ## Requirements
 

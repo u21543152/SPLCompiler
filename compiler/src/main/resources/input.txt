@@ -2,7 +2,7 @@ main
 begin
     num V_a;
     num V_y;
-    V_x := 10.2;
+    V_x := "Hello";
     V_y := V_x + 5;
 
     if V_x grt 5 then
