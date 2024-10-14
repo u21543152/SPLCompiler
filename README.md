@@ -10,7 +10,7 @@
     - The lexer will read the `input.txt` file, tokenize the contents, and output the tokens to an XML file.
 
 3. **Output**:
-    - The tokens will be written to an XML file (e.g., `output.xml`) in the project root directory, which can then be used by the parser.
+    - The tokens will be written to an XML file (e.g., `output.xml`) in the `src/main/resources/` directory, which can then be used by the parser.
 
 ## Requirements
 
