@@ -20,7 +20,7 @@ public class RecSPLLexerTest {
             List<Token> tokens = lexer.tokenize();
 
             // Write the tokens to an XML file
-            lexer.writeTokensToXML("output.xml");
+            lexer.writeTokensToXML("SPLCompiler\\compiler\\src\\main\\resources\\output.xml");
 
             System.out.println("Tokenization successful! Output written to output.xml.");
         } catch (Exception e) {
