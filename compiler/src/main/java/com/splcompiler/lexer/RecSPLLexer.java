@@ -22,16 +22,23 @@ public class RecSPLLexer {
     // Reserved keywords for RecSPL
     private static final Set<String> keywords = new HashSet<>(Arrays.asList(
             "main", "num", "text", "begin", "end", "skip", "halt", "print",
-            "input", "if", "then", "else", "not", "sqrt", "eq", "grt", "and", "or",
-            "add", "sub", "mul", "div", "return", "while", "for", "do", "void"
+            "input", "if", "then", "else", "return", "while", "for", "do", "void"
     ));
 
+    private static final Set<String> unops = new HashSet<>(Arrays.asList(
+            "not", "sqrt"
+    ));
+
+    private static final Set<String> binops = new HashSet<>(Arrays.asList(
+            "eq", "grt", "and", "or",
+            "add", "sub", "mul", "div"
+    ));
     // Regular expressions for token classes
     private static final Pattern VNAME_PATTERN = Pattern.compile("V_[a-z]([a-z]|[0-9])*");
     private static final Pattern FNAME_PATTERN = Pattern.compile("F_[a-z]([a-z]|[0-9])*");
     private static final Pattern NUMBER_PATTERN = Pattern.compile("-?(0|[1-9][0-9]*)(\\.[0-9]+)?");
     private static final Pattern TEXT_PATTERN = Pattern.compile("\"[A-Z][a-z]{0,7}\"");
-    private static final Pattern OPERATOR_PATTERN = Pattern.compile(":=|[+\\-*/]");
+    private static final Pattern OPERATOR_PATTERN = Pattern.compile(":=");
     private static final Pattern PUNCTUATION_PATTERN = Pattern.compile("[,;(){}]");
 
     public RecSPLLexer(String input) {
@@ -77,6 +84,16 @@ public class RecSPLLexer {
             String word = extractWord();
             if (keywords.contains(word)) {
                 tokens.add(new Token(tokenId++, TokenType.KEYWORD, word));
+                continue;
+            }
+
+            if (unops.contains(word)) {
+                tokens.add(new Token(tokenId++, TokenType.UNOP, word));
+                continue;
+            }
+
+            if (binops.contains(word)) {
+                tokens.add(new Token(tokenId++, TokenType.BINOP, word));
                 continue;
             }
 

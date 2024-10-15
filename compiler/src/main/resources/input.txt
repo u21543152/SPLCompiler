@@ -1,18 +1,23 @@
 main
+    text V_a,
+    num V_y,
+    num V_x,
 begin
-    text V_a;
-    num V_y;
-    num V_x;
     V_a := "Hello";
     V_x := 10;
-    V_y := V_x + 5;
+    V_y := add(V_x,5);
 
-    if V_x grt 5 then
-        print V_x;
+    if grt(V_x,5) then
+        begin
+            print V_x;
+        end
     else
-        print V_y;
+        begin
+            print V_y;
+        end
+    ;
     end
 
-    F_sum(V_x, V_y, "Result");
+    F_sum(V_x, V_y, V_a);
 
 end
