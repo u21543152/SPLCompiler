@@ -1,18 +1,38 @@
 main
+num V_a , text V_b ,
 begin
-    text V_a;
-    num V_y;
-    num V_x;
-    V_a := "Hello";
-    V_x := 10;
-    V_y := V_x + 5;
-
-    if V_x grt 5 then
-        print V_x;
-    else
-        print V_y;
+    V_a < input ;
+    V_b = "Higuys" ;
+    if grt ( V_a , 100 ) then
+    begin
+        F_foo ( V_a , 100 , 200 ) ;
     end
-
-    F_sum(V_x, V_y, "Result");
-
+    else
+    begin
+        skip ;
+    end ;
+end
+num F_foo ( V_param1 , V_param2 , V_param3 )
+{
+    num V_var1 ,
+    num V_var2 ,
+    num V_var3 ,
+    begin
+    V_var1 = add ( V_param2 , V_param3 ) ;
+    V_var2 = add ( V_param1 , V_param2 ) ;
+    V_var3 = add ( V_var1 , V_var2 ) ;
+    return V_var3 ;
+    end
+}
+num F_bar ( V_param1 , V_param2 , V_param3 )
+{
+    num V_var4 ,
+    num V_var5 ,
+    num V_var6 ,
+    begin
+    V_var6 = add ( V_var4 , V_var5 ) ;
+    return V_var6 ;
+    end
+}
+end
 end

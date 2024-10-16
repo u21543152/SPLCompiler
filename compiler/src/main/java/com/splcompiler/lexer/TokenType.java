@@ -8,5 +8,7 @@ public enum TokenType {
     KEYWORD, // Reserved keywords (e.g., main, num, text)
     OPERATOR, // Operators (e.g., +, -, :=, etc.)
     PUNCTUATION, // Punctuation (e.g., , ; { } ( ))
-    EOF            // End of input
+    EOF,
+    UNOP,
+    BINOP,// End of input
 }

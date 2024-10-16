@@ -1,5 +1,5 @@
 target/
-compiler/src/main/resources/output.xml
+compiler/src/main/resources
 compiler/.classpath
 compiler/.project
 compiler/.settings/org.eclipse.jdt.core.prefs
