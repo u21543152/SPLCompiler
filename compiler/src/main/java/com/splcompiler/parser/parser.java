@@ -332,6 +332,12 @@ public class parser {
         return node;
     }
 
+    private Node parseVTYPE(Node parent) {
+        innerNode node = new innerNode(current++, "VTYP", parent);
+        node.addChild(new leafNode(current++, advance().value(), node));
+        return node;
+    }
+
     private Node parseCall(Node parent) {
         innerNode node = new innerNode(current++, "CALL", parent);
         node.addChild(parseFName(node));
@@ -351,8 +357,8 @@ public class parser {
 
     private Node parseGlobalVar(Node parent) {
         innerNode node = new innerNode(current++, "GlobVar", parent);
-        node.addChild(parseLeaf(node, consume(TokenType.KEYWORD).value()));
-        node.addChild(parseLeaf(node, consume(TokenType.VNAME).value()));
+        node.addChild(parseVTYPE(node));
+        node.addChild(parseVName(node));
         match(",");
         node.addChild(new leafNode(current++, ",", node));
         while (!check("begin")) {
