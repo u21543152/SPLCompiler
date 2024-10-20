@@ -398,7 +398,7 @@ public class parser {
     }
 
     private boolean check(TokenType type) {
-        System.out.println(tokens.get(tcurrent).type() + " " + type);
+        //System.out.println(tokens.get(tcurrent).type() + " " + type);
         return !isAtEnd() && tokens.get(tcurrent).type() == type;
     }
 

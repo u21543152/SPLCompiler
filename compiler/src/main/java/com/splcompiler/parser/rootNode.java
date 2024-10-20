@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class rootNode extends Node {  // Make this class public
-    public List<Node> children = new ArrayList<>();
 
     // Constructor for rootNode class
     public rootNode(int Unid, String Symbol) {

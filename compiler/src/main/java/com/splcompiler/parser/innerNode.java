@@ -5,7 +5,6 @@ import java.util.List;
 
 public class innerNode extends Node {
     public Node parent;
-    public List<Node> children = new ArrayList<>();
 
     // Constructor for innerNode class
     public innerNode(int Unid, String Symbol, Node parent) {
