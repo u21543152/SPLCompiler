@@ -13,5 +13,10 @@ public abstract class Node {
         this.Symbol = Symbol;
         this.children = new ArrayList<Node>();
     }
+    
+    public String toString()
+    {
+    	return Unid+" / "+Symbol+" / "+children;
+    }
 }
 

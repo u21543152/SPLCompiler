@@ -1,11 +1,12 @@
 package com.splcompiler.symboltable;
 
+import java.awt.datatransfer.SystemFlavorMap;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SymbolTable
 {
-	class Symbol 
+	public class Symbol 
 	{
 	    private int id;
 	    private String name;
@@ -61,8 +62,43 @@ public class SymbolTable
     // Method to add a symbol to the table
     public void addReplaceSymbol(int id, String name, String type, Object value) 
     {
-        Symbol symbol = new Symbol(id, name, type, value);
-        table.put(id, symbol);
+    	System.out.println("Calling addReplaceSymbol("+id+", "+name+", "+type+", "+value+")");
+    	boolean found = false;
+    	int temp = -1;
+    	for (Map.Entry<Integer, Symbol> i : table.entrySet())
+    	{
+    		if (i.getValue().getName().equals(name))
+    		{
+    			found = true;
+    			temp = i.getKey();
+    		}
+    	}
+    	if (found) //replace existing - if there is no type supplied, use the old type, if an incorrect type is supplied, throw error
+    	{
+    		System.out.println("Found existing symbol");
+    		Symbol symbol = new Symbol(id, null, null, null); //to be replaced in below code
+    		String oldType = getSymbolType(temp); //fetches the type from the current symbol
+    		if (type == "" || type == " " || type == null) //there is no type supplied, such as in an input check: use the old type
+    		{
+    			symbol = new Symbol(id, name, oldType, value);
+    		}
+    		else if (type == oldType) // the new type is the same as the old type; no worries
+    		{
+    			symbol = new Symbol(id, name, type, value);
+    		}
+    		else if (type != oldType) // the new type is different: this is a violation of type checking
+    		{
+    			System.out.println("ERROR: New type "+type+" of variable "+name+" does not match type ("+oldType+"). Errors may occur.");
+    			symbol = new Symbol(id, name, type, value); //do it anyway but warn the user
+    		}
+    		table.put(temp, symbol);
+    	}
+    	else //add new
+    	{
+    		System.out.println("Making new symbol");
+	        Symbol symbol = new Symbol(id, name, type, value);
+	        table.put(id, symbol);
+    	}
     }
     
     // Method to update a symbol in the table

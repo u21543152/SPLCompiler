@@ -3,12 +3,15 @@ package parser;
 import com.splcompiler.lexer.Token;
 import com.splcompiler.parser.*;
 import com.splcompiler.symboltable.*;
+import com.splcompiler.symboltable.SymbolTable.Symbol;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ParserTest {
 	static SymbolTable tableTest = new SymbolTable();
@@ -92,11 +95,39 @@ public class ParserTest {
         }
     }
     
+    static int curGlobVar = 0;
+    static Map<Integer, Node> globVarNodes = new HashMap<>();
+	
+    static int curAssign = 0;
+    static Map<Integer, Node> assignNodes = new HashMap<>();
+	
+    static int curFunction = 0;
+    static Map<Integer, Node> functionNodes = new HashMap<>();
+    public static void fillTableVariables(Node node) // this table is going to traverse the entire tree and only add variables to the symbol table
+    // there are three variable types: num, text, and input
+    {
+    	// find all GlobVar nodes, and add them to a list
+    	// then all ASSIGN nodes, then all FUNCTION nodes
+    	// FIRST do GlobVar, THEN function, THEN assign
+    	if (node.Symbol.equals("GlobVar"))
+    	{
+    		System.out.println("GlobVar found.");
+    		globVarNodes.put(curGlobVar, node);
+    	}
+    	else if (node.Symbol.equals("ASSIGN"))
+    	{
+    		System.out.println("ASSIGN found.");
+    		assignNodes.put(curAssign, node);
+    	}
+    	
+    	
+    }
+    
     public static void symboliseNodes(Node node)
     {
         // Check if this node requires an addition to the symbol table
     	//int id, String name, String type, Object value
-    	System.out.println("Node: "+node.Symbol);
+    	//System.out.println("Node: "+node.Symbol);
     	if (node instanceof rootNode root) 
     	{
     		//go through all sub-nodes
@@ -110,6 +141,7 @@ public class ParserTest {
     		//fill symbol table
     		if (node.Symbol.equals("GlobVar"))
         	{
+    			System.out.println("GlobVar:");
         		//find its VTYP child + VNAME child, set those as name and type
         		String type = "";
         		String name = "";
@@ -126,33 +158,35 @@ public class ParserTest {
         				name = child.children.get(0).Symbol;
         			}
         		}
-        		System.out.println("Name: "+name+". Type: "+type);
+        		System.out.println("\tName: "+name+", Type: "+type);
         		tableTest.addReplaceSymbol(node.Unid, name, type, null);
         	}
-    		/*
     		else if (node.Symbol == "ASSIGN")
         	{
-        		System.out.println("Node: "+node.Symbol);
-        		//find its VTYP child + VNAME child, set those as name and type
+    			System.out.println("ASSIGN:");
+    			//find its children; first is variable name, second is either input or =, third is type
+    			String name = "";
         		String type = "";
-        		String name = "";
-        		for (Node child : inner.children)
+        		Object value = null;
+        		name = inner.children.get(0).Symbol;
+        		if (inner.children.get(1).Symbol == "=") // assign to a term
         		{
-        			if (child.Symbol == "VTYP")
-        			{
-        				type = child.children.get(0).Symbol;
-        			}
-        			else if (child.Symbol == "VNAME")
-        			{
-        				name = child.children.get(0).Symbol;
-        			}
+        			System.out.println("\t= type");
+        			type = getType(inner.children.get(2));
         		}
+        		else // assign is input instead
+        		{
+        			System.out.println("\tinput type");
+        			type = null;
+        		}
+        		
+        		//System.out.println("Name: "+name+". Type: "+type);
         		tableTest.addReplaceSymbol(node.Unid, name, type, null);
         	}
-        	else if (node.Symbol == "HEADER")
+        	else if (node.Symbol == "HEADER") //it's a function
         	{
         		
-        	}*/
+        	}
     		//then go through all sub-nodes
     		for (Node child : inner.children)
     		{
@@ -163,6 +197,38 @@ public class ParserTest {
     	{
             //System.out.println("This is a leaf.");
             
+    	}
+    }
+    public static String getType(Node node) // should output the type of a given node, intended for TERM and the like
+    // might also need to return the type of a function, rip
+    {
+    	if (node instanceof leafNode leaf) // node has no children i.e. is a leaf, should only happen when acting on a leaf node
+    	{
+    		System.out.println("getType: "+node.toString());
+    		return classify(node.Symbol);
+    	}
+    	else //object is not a leaf, thus it is instead a TERM, meaning either
+    	/*
+    	 * - an ATOMIC (extract its value from its child)
+    	 * - a CALL (extract its type from the symbol table or create if necessary
+    	 * - an OP (determine type based on the operation)
+    	 */
+    	{
+    		
+    	}
+		return null;
+    }
+    
+    public static String classify(Object input) //returns a string of the type of the input
+    { // should only ever receive either numbers or strings
+    	try
+    	{
+    		int a = Integer.parseInt((String) input);
+    		return "num";
+    	}
+    	catch (Exception e)
+    	{
+    		return "text";
     	}
     }
 
