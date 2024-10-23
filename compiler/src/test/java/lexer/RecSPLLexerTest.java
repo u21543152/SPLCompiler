@@ -13,14 +13,14 @@ public class RecSPLLexerTest {
     public static void main(String[] args) {
         try {
             // Read the input RecSPL program from a text file
-            String input = readFile("src\\main\\resources\\input.txt");
+            String input = readFile("SPLCompiler/compiler/src\\main\\resources\\input.txt");
 
             // Create a lexer and tokenize the input
             RecSPLLexer lexer = new RecSPLLexer(input);
             List<Token> tokens = lexer.tokenize();
 
             // Write the tokens to an XML file
-            lexer.writeTokensToXML("src\\main\\resources\\output.xml");
+            lexer.writeTokensToXML("SPLCompiler/compiler/src\\main\\resources\\output.xml");
 
             System.out.println("Tokenization successful! Output written to output.xml.");
         } catch (Exception e) {
