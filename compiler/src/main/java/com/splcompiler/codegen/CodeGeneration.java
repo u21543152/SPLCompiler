@@ -27,7 +27,6 @@ public class CodeGeneration
 	        rootNode root = parser.parseProgram();
 	        
 	        // Step 3: Actually create the code
-	        
 	        for (Node child : root.children)
 	        {
 	            processNodes(child);
@@ -38,7 +37,7 @@ public class CodeGeneration
 	 
 	 public static void processNodes(Node node) 
 	 {
-	     // Recursively process its children
+	     //recursively process children
 		 System.out.println(node.Symbol);
 		 for (Node child : node.children) 
 	     {
@@ -46,7 +45,7 @@ public class CodeGeneration
 	     }
 	 }
 	 
-	 public static void processNode(Node node)
+	 public static void processNode(Node node) // this function outputs 
 	 {
 		 
 	 }

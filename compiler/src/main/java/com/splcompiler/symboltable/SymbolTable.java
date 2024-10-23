@@ -12,6 +12,7 @@ public class SymbolTable
 	    private String name;
 	    private String type;
 	    private Object value;
+	    private String note;
 
 	    // Constructor for a symbol
 	    public Symbol(int id, String name, String type, Object value) 
@@ -42,11 +43,22 @@ public class SymbolTable
 	    {
 	        return value;
 	    }
+	    
+	    public String getNote()
+	    {
+	    	return note;
+	    }
 
 	    // Setter method for value (if needed)
 	    public void setValue(Object value) 
 	    {
 	        this.value = value;
+	    }
+	    
+	    //set the note where necessary
+	    public void setNote(String note)
+	    {
+	    	this.note = note;
 	    }
 	}
 	
@@ -62,7 +74,7 @@ public class SymbolTable
     // Method to add a symbol to the table
     public void addReplaceSymbol(int id, String name, String type, Object value) 
     {
-    	System.out.println("Calling addReplaceSymbol("+id+", "+name+", "+type+", "+value+")");
+    	//System.out.println("Calling addReplaceSymbol("+id+", "+name+", "+type+", "+value+")");
     	boolean found = false;
     	int temp = -1;
     	for (Map.Entry<Integer, Symbol> i : table.entrySet())
@@ -75,7 +87,7 @@ public class SymbolTable
     	}
     	if (found) //replace existing - if there is no type supplied, use the old type, if an incorrect type is supplied, throw error
     	{
-    		System.out.println("Found existing symbol");
+    		//System.out.println("Found existing symbol");
     		Symbol symbol = new Symbol(id, null, null, null); //to be replaced in below code
     		String oldType = getSymbolType(temp); //fetches the type from the current symbol
     		if (type == "" || type == " " || type == null) //there is no type supplied, such as in an input check: use the old type
@@ -88,14 +100,15 @@ public class SymbolTable
     		}
     		else if (type != oldType) // the new type is different: this is a violation of type checking
     		{
-    			System.out.println("ERROR: New type "+type+" of variable "+name+" does not match type ("+oldType+"). Errors may occur.");
+    			//System.out.println("ERROR: New type "+type+" of variable "+name+" does not match type ("+oldType+"). Errors may occur.");
     			symbol = new Symbol(id, name, type, value); //do it anyway but warn the user
+    			symbol.setNote("TypeError: New type "+type+" of variable "+name+" does not match type ("+oldType+"). Errors may occur.");
     		}
     		table.put(temp, symbol);
     	}
     	else //add new
     	{
-    		System.out.println("Making new symbol");
+    		//System.out.println("Making new symbol");
 	        Symbol symbol = new Symbol(id, name, type, value);
 	        table.put(id, symbol);
     	}
@@ -117,6 +130,19 @@ public class SymbolTable
             return symbol.getName();
         }
         return null; // or throw an exception if the symbol doesn't exist
+    }
+    
+ // Method to retrieve a symbol's name by its ID
+    public Symbol getSymbolByName(String name) 
+    {
+    	for (Map.Entry<Integer, Symbol> i : table.entrySet())
+    	{
+    		if (i.getValue().getName().equals(name))
+    		{
+    			return i.getValue();
+    		}
+    	}
+    	return null;
     }
 
     // Method to retrieve a symbol's type by its ID
@@ -144,13 +170,14 @@ public class SymbolTable
         if (table.isEmpty()) {
             System.out.println("The symbol table is empty.");
         } else {
-            System.out.println("ID\tName\tType\t\tValue");
-            System.out.println("------------------------------------");
+            System.out.println("ID\tName\tType\t\tValue\t\tNote");
+            System.out.println("----------------------------------------------------");
             for (Symbol symbol : table.values()) {
                 System.out.println(symbol.getId() + "\t" +
                                    symbol.getName() + "\t" +
                                    symbol.getType() + "\t\t" +
-                                   symbol.getValue());
+                                   symbol.getValue() + "\t\t" +
+                                   symbol.getNote());
             }
         }
     }
