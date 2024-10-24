@@ -3,9 +3,15 @@ package com.splcompiler.symboltable;
 import java.awt.datatransfer.SystemFlavorMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class SymbolTable
 {
+	private int varCount = 1;
+	private int funCount = 1;
+	
+	public static Map<String, String> symbolTable = new HashMap<>();
+	
 	public class Symbol 
 	{
 	    private int id;
@@ -111,8 +117,31 @@ public class SymbolTable
     	{
     		//System.out.println("Making new symbol");
 	        Symbol symbol = new Symbol(id, name, type, value);
+	        if ((name.charAt(0)+"").toLowerCase().equals("v"))
+		    {
+		    	symbolTable.put("v"+varCount, name); varCount++;
+		    }
+		    else if ((name.charAt(0)+"").toLowerCase().equals("f"))
+		    {
+		    	symbolTable.put("f"+funCount, name); funCount++;
+		    }
 	        table.put(id, symbol);
     	}
+    }
+    
+    public void addSymbol(int id, String name, String type, Object value) //special case to be used for intentional duplicates
+    {
+    	 Symbol symbol = new Symbol(id, name, type, value);
+	     if ((name.charAt(0)+"").toLowerCase().equals("v"))
+	     {
+	    	 symbolTable.put("v"+varCount, name); varCount++;
+	     }
+	     else if ((name.charAt(0)+"").toLowerCase().equals("f"))
+	     {
+	    	 symbolTable.put("f"+funCount, name); funCount++;
+	     }
+	        
+	     table.put(id, symbol);
     }
     
     // Method to update a symbol in the table
@@ -180,6 +209,10 @@ public class SymbolTable
             	String value = String.format("%-" + 15 + "s", symbol.getValue());
             	String note = String.format("%-" + 15 + "s", symbol.getNote());
                 System.out.println(id + name + type + note);
+            }
+            for (Entry<String, String> test : symbolTable.entrySet())
+            {
+            	System.out.println(test.getKey() + " " + test.getValue());
             }
         }
     }

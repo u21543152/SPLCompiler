@@ -183,9 +183,9 @@ public class ParserTest {
     		String name1 = node.children.get(3).children.get(0).Symbol;
     		String name2 = node.children.get(5).children.get(0).Symbol;
     		String name3 = node.children.get(7).children.get(0).Symbol;
-    		tableTest.addReplaceSymbol(node.children.get(3).children.get(0).Unid, name1, "flex", null);
-    		tableTest.addReplaceSymbol(node.children.get(5).children.get(0).Unid, name2, "flex", null);
-    		tableTest.addReplaceSymbol(node.children.get(7).children.get(0).Unid, name3, "flex", null);
+    		tableTest.addSymbol(node.children.get(3).children.get(0).Unid, name1, "flex", null);
+    		tableTest.addSymbol(node.children.get(5).children.get(0).Unid, name2, "flex", null);
+    		tableTest.addSymbol(node.children.get(7).children.get(0).Unid, name3, "flex", null);
     	}
     	
     	for (Node child : node.children)
@@ -251,9 +251,9 @@ public class ParserTest {
     	int id1 = locVars.children.get(0).Unid;
     	int id2 = locVars.children.get(2).Unid;
     	int id3 = locVars.children.get(4).Unid;
-    	tableTest.addReplaceSymbol(id1, locVars.children.get(1).Symbol, locVars.children.get(0).Symbol, null); // add local var 1
-    	tableTest.addReplaceSymbol(id2, locVars.children.get(3).Symbol, locVars.children.get(2).Symbol, null); // add local var 2
-    	tableTest.addReplaceSymbol(id3, locVars.children.get(5).Symbol, locVars.children.get(4).Symbol, null); // add local var 3
+    	tableTest.addSymbol(id1, locVars.children.get(1).Symbol, locVars.children.get(0).Symbol, null); // add local var 1
+    	tableTest.addSymbol(id2, locVars.children.get(3).Symbol, locVars.children.get(2).Symbol, null); // add local var 2
+    	tableTest.addSymbol(id3, locVars.children.get(5).Symbol, locVars.children.get(4).Symbol, null); // add local var 3
     }
 
     public static void checkAssigns()
