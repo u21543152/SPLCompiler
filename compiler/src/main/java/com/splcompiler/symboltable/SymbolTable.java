@@ -216,4 +216,29 @@ public class SymbolTable
             }
         }
     }
+    
+    public String getTable() {
+        String out = "";
+    	if (table.isEmpty()) {
+            System.out.println("The symbol table is empty.");
+        } else {
+        	out += "Primary symbol table\n";
+            out += "ID    Name           Type           Note\n";
+            out += "----------------------------------------\n";
+            for (Symbol symbol : table.values()) {
+            	String id = String.format("%-" + 6 + "s", (symbol.getId()+""));
+            	String name = String.format("%-" + 15 + "s", symbol.getName());
+            	String type = String.format("%-" + 15 + "s", symbol.getType());
+            	String value = String.format("%-" + 15 + "s", symbol.getValue());
+            	String note = String.format("%-" + 15 + "s", symbol.getNote());
+                out += id + name + type + note+"\n";
+            }
+            out += "Unique variable identity table\n";
+            for (Entry<String, String> test : symbolTable.entrySet())
+            {
+            	out += test.getKey() + " " + test.getValue()+"\n";
+            }
+        }
+        return out;
+    }
 }
