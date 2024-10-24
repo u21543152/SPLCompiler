@@ -3,7 +3,7 @@ num V_a , text V_b ,
 begin
     V_a < input ;
     V_b = "Higuys" ;
-    if grt ( V_a , 100 ) then
+    if and( grt ( V_a , 100 ),grt ( V_a , 100 )) then
     begin
         F_foo ( V_a , 100 , 200 ) ;
     end

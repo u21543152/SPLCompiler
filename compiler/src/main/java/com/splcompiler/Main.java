@@ -131,6 +131,10 @@ public class Main
 				String code = codeGen.translateNode("0", doc);
 				System.out.println(code);
 
+				FileWriter writer3 = new FileWriter("SPLCompiler/compiler/src/main/resources/intermediate_code.txt");
+				writer3.write(code);
+				writer3.close();
+
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			} catch (SAXException e) {
@@ -181,7 +185,11 @@ public class Main
     // Example method to generate the DOT structure
     public static void generateDOT(Node node, FileWriter writer) throws IOException {
         // Write the node's information
-        writer.write(node.Unid + " [label=\"" + node.Symbol + "\"];\n");
+        if (node.Symbol.startsWith("\"")) {
+			writer.write(node.Unid + " [label=" + node.Symbol + "];\n");
+		}else {
+			writer.write(node.Unid + " [label=\"" + node.Symbol + "\"];\n");
+		}
 
         // Check if the node has children, write the edges, and recurse for each child
         if (node instanceof rootNode root) {

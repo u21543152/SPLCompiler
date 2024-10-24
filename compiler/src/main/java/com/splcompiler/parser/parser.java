@@ -306,7 +306,7 @@ public class parser {
         if (value.startsWith("\"") && value.endsWith("\"")) {
             // You can escape the inner quotes
             value = value.substring(1, value.length() - 1); // Remove the quotes
-            value = "\\\"" + value + "\\\""; // Add escaped quotes back
+            value = "\"" + value + "\""; // Add escaped quotes back
         }
 
         node.addChild(new leafNode(current++, value, node)); // Add the modified value to the leaf node

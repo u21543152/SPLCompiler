@@ -187,13 +187,13 @@ public class ParserTest {
     		tableTest.addSymbol(node.children.get(5).children.get(0).Unid, name2, "flex", null);
     		tableTest.addSymbol(node.children.get(7).children.get(0).Unid, name3, "flex", null);
     	}
-    	
+
     	for (Node child : node.children)
     	{
     		fillTableParams(child);
     	}
     }
-    
+
     public static void tableGlobVars() // this function adds all GlobVars to the symbol table
     {
     	for (Node cur : globVarNodes.values())
@@ -217,7 +217,7 @@ public class ParserTest {
     		tableTest.addReplaceSymbol(cur.Unid, name, type, null);
     	}
     }
-    
+
     public static void tableFunctions() // this function adds all functions to the symbol table
     {
     	for (Node cur : functionNodes.values()) // "cur" now represents a single DECL node
@@ -242,7 +242,7 @@ public class ParserTest {
     		tableLocVars(cur);
     	}
     }
-    
+
     public static void tableLocVars(Node node) // this function adds all local variables of a function to the symbol table
     // "node" stores a DECL node
     {
