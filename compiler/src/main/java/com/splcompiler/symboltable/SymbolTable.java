@@ -94,12 +94,13 @@ public class SymbolTable
     		{
     			symbol = new Symbol(id, name, oldType, value);
     		}
-    		else if (type == oldType) // the new type is the same as the old type; no worries
+    		else if (type.equals(oldType)) // the new type is the same as the old type; no worries
     		{
     			symbol = new Symbol(id, name, type, value);
     		}
-    		else if (type != oldType) // the new type is different: this is a violation of type checking
+    		else // the new type is different: this is a violation of type checking
     		{
+    			System.out.println("new type: "+type+", old type: "+oldType);
     			//System.out.println("ERROR: New type "+type+" of variable "+name+" does not match type ("+oldType+"). Errors may occur.");
     			symbol = new Symbol(id, name, type, value); //do it anyway but warn the user
     			symbol.setNote("TypeError: New type "+type+" of variable "+name+" does not match type ("+oldType+"). Errors may occur.");
@@ -170,14 +171,15 @@ public class SymbolTable
         if (table.isEmpty()) {
             System.out.println("The symbol table is empty.");
         } else {
-            System.out.println("ID\tName\tType\t\tValue\t\tNote");
-            System.out.println("----------------------------------------------------");
+            System.out.println("ID    Name           Type           Note");
+            System.out.println("----------------------------------------");
             for (Symbol symbol : table.values()) {
-                System.out.println(symbol.getId() + "\t" +
-                                   symbol.getName() + "\t" +
-                                   symbol.getType() + "\t\t" +
-                                   symbol.getValue() + "\t\t" +
-                                   symbol.getNote());
+            	String id = String.format("%-" + 6 + "s", (symbol.getId()+""));
+            	String name = String.format("%-" + 15 + "s", symbol.getName());
+            	String type = String.format("%-" + 15 + "s", symbol.getType());
+            	String value = String.format("%-" + 15 + "s", symbol.getValue());
+            	String note = String.format("%-" + 15 + "s", symbol.getNote());
+                System.out.println(id + name + type + note);
             }
         }
     }
