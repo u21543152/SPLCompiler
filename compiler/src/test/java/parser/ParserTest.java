@@ -49,9 +49,21 @@ public class ParserTest {
         System.out.println("DOT file created! Visualize with Graphviz.");
         
         
-        //test symbol table
-        symboliseNodes(root);
+        //test symbol table, stage 1
+        fillTableGlobVars(root);
+        fillTableAssign(root);
+        fillTableFunction(root);
+        fillTableParams(root);
+        //test symbol table, stage 2
+        tableGlobVars();
+        tableFunctions();
+        //test symbol table, stage 3
+        checkAssigns();
+        //symboliseNodes(root);
         tableTest.printTable();
+        
+        
+        
     }
 
     private static void writeTreeToXML(String filePath, rootNode root, List<innerNode> innerNodes, List<leafNode> leafNodes) {
@@ -105,135 +117,359 @@ public class ParserTest {
 	
     static int curFunction = 0;
     static Map<Integer, Node> functionNodes = new HashMap<>();
-    public static void fillTableVariables(Node node) // this table is going to traverse the entire tree and only add variables to the symbol table
+    
+    public static void fillTableGlobVars(Node node) // this table is going to traverse the entire tree and add GlobVars
     // there are three variable types: num, text, and input
     {
+    	//System.out.println(node.Symbol);
     	// find all GlobVar nodes, and add them to a list
-    	// then all ASSIGN nodes, then all FUNCTION nodes
-    	// FIRST do GlobVar, THEN function, THEN assign
     	if (node.Symbol.equals("GlobVar"))
     	{
-    		System.out.println("GlobVar found.");
+    		//System.out.println("GlobVar found.");
     		globVarNodes.put(curGlobVar, node);
+    		curGlobVar++;
     	}
-    	else if (node.Symbol.equals("ASSIGN"))
+    	
+    	for (Node child : node.children)
     	{
-    		System.out.println("ASSIGN found.");
+    		fillTableGlobVars(child);
+    	}
+    }
+    
+    
+    
+    public static void fillTableAssign(Node node) // this table is going to traverse the entire tree and add ASSIGNs
+    // there are three variable types: num, text, and input
+    {
+    	//System.out.println(node.Symbol);
+    	// find all ASSIGN nodes, and add them to a list
+    	if (node.Symbol.equals("ASSIGN"))
+    	{
+    		//System.out.println("ASSIGN found.");
     		assignNodes.put(curAssign, node);
+    		curAssign++;
     	}
     	
-    	
+    	for (Node child : node.children)
+    	{
+    		fillTableAssign(child);
+    	}
     }
     
-    public static void symboliseNodes(Node node)
+    
+    public static void fillTableFunction(Node node) // this table is going to traverse the entire tree and add functions
     {
-        // Check if this node requires an addition to the symbol table
-    	//int id, String name, String type, Object value
-    	//System.out.println("Node: "+node.Symbol);
-    	if (node instanceof rootNode root) 
+    	//System.out.println(node.Symbol);
+    	// find all DECL nodes, and add them to a list
+    	if (node.Symbol.equals("DECL"))
     	{
-    		//go through all sub-nodes
-    		for (Node child : root.children)
-    		{
-    			symboliseNodes(child);
-    		}
+    		//System.out.println("DECL found.");
+    		functionNodes.put(curFunction, node);
+    		curFunction++;
     	}
-    	else if (node instanceof innerNode inner)
+    	
+    	for (Node child : node.children)
     	{
-    		//fill symbol table
-    		if (node.Symbol.equals("GlobVar"))
-        	{
-    			System.out.println("GlobVar:");
-        		//find its VTYP child + VNAME child, set those as name and type
-        		String type = "";
-        		String name = "";
-        		for (Node child : inner.children)
-        		{
-        			if (child.Symbol == "VTYP")
-        			{
-        				//System.out.println("This node is a VTYP with children "+child.children+" "+child.children.get(0).Symbol);
-        				type = child.children.get(0).Symbol;
-        			}
-        			else if (child.Symbol == "VNAME")
-        			{
-        				//System.out.println("This node is a VNAME with children "+child.children+" "+child.children.get(0).Symbol);
-        				name = child.children.get(0).Symbol;
-        			}
-        		}
-        		System.out.println("\tName: "+name+", Type: "+type);
-        		tableTest.addReplaceSymbol(node.Unid, name, type, null);
-        	}
-    		else if (node.Symbol == "ASSIGN")
-        	{
-    			System.out.println("ASSIGN:");
-    			//find its children; first is variable name, second is either input or =, third is type
-    			String name = "";
-        		String type = "";
-        		Object value = null;
-        		name = inner.children.get(0).Symbol;
-        		if (inner.children.get(1).Symbol == "=") // assign to a term
-        		{
-        			System.out.println("\t= type");
-        			type = getType(inner.children.get(2));
-        		}
-        		else // assign is input instead
-        		{
-        			System.out.println("\tinput type");
-        			type = null;
-        		}
-        		
-        		//System.out.println("Name: "+name+". Type: "+type);
-        		tableTest.addReplaceSymbol(node.Unid, name, type, null);
-        	}
-        	else if (node.Symbol == "HEADER") //it's a function
-        	{
-        		
-        	}
-    		//then go through all sub-nodes
-    		for (Node child : inner.children)
-    		{
-    			symboliseNodes(child);
-    		}
-    	}
-    	else if (node instanceof leafNode leaf) 
-    	{
-            //System.out.println("This is a leaf.");
-            
+    		fillTableFunction(child);
     	}
     }
-    public static String getType(Node node) // should output the type of a given node, intended for TERM and the like
-    // might also need to return the type of a function, rip
+    
+    public static void fillTableParams(Node node) // this table is going to traverse the entire tree and add param variables based on CALLs
     {
-    	if (node instanceof leafNode leaf) // node has no children i.e. is a leaf, should only happen when acting on a leaf node
+    	//System.out.println(node.Symbol);
+    	// find all HEAEDER nodes, and add them to a list
+    	if (node.Symbol.equals("HEADER"))
     	{
-    		System.out.println("getType: "+node.toString());
-    		return classify(node.Symbol);
+    		String name1 = node.children.get(3).children.get(0).Symbol;
+    		String name2 = node.children.get(5).children.get(0).Symbol;
+    		String name3 = node.children.get(7).children.get(0).Symbol;
+    		tableTest.addReplaceSymbol(node.children.get(3).children.get(0).Unid, name1, "flex", null);
+    		tableTest.addReplaceSymbol(node.children.get(5).children.get(0).Unid, name2, "flex", null);
+    		tableTest.addReplaceSymbol(node.children.get(7).children.get(0).Unid, name3, "flex", null);
     	}
-    	else //object is not a leaf, thus it is instead a TERM, meaning either
-    	/*
-    	 * - an ATOMIC (extract its value from its child)
-    	 * - a CALL (extract its type from the symbol table or create if necessary
-    	 * - an OP (determine type based on the operation)
-    	 */
+    	
+    	for (Node child : node.children)
     	{
+    		fillTableParams(child);
+    	}
+    }
+    
+    public static void tableGlobVars() // this function adds all GlobVars to the symbol table
+    {
+    	for (Node cur : globVarNodes.values())
+    	{
+    		String type = "";
+    		String name = "";
+    		for (Node child : cur.children)
+    		{
+    			if (child.Symbol == "VTYP")
+    			{
+    				//System.out.println("This node is a VTYP with children "+child.children+" "+child.children.get(0).Symbol);
+    				type = child.children.get(0).Symbol;
+    			}
+    			else if (child.Symbol == "VNAME")
+    			{
+    				//System.out.println("This node is a VNAME with children "+child.children+" "+child.children.get(0).Symbol);
+    				name = child.children.get(0).Symbol;
+    			}
+    		}
+    		//System.out.println("\tName: "+name+", Type: "+type);
+    		tableTest.addReplaceSymbol(cur.Unid, name, type, null);
+    	}
+    }
+    
+    public static void tableFunctions() // this function adds all functions to the symbol table
+    {
+    	for (Node cur : functionNodes.values()) // "cur" now represents a single DECL node
+    	{
+    		Node cur2 = cur.children.get(0); // "cur2" now represents a single HEADER node
+    		//System.out.println("  cur2: "+cur2.Symbol);
+    		//find its FTYP child + FNAME child, set those as name and type, add to table
+    		String type = "";
+    		String name = "";
+    		for (Node child : cur2.children)
+    		{
+    			if (child.Symbol == "FTYP")
+    			{
+    				type = child.children.get(0).Symbol;
+    			}
+    			else if (child.Symbol == "FNAME")
+    			{
+    				name = child.children.get(0).Symbol;
+    			}
+    		}
+    		tableTest.addReplaceSymbol(cur.Unid, name, type, null);
+    		tableLocVars(cur);
+    	}
+    }
+    
+    public static void tableLocVars(Node node) // this function adds all local variables of a function to the symbol table
+    // "node" stores a DECL node
+    {
+    	//System.out.println("Tabling local variables");
+    	Node locVars = node.children.get(1).children.get(1); // retrieves the LOCVARS node
+    	int id1 = locVars.children.get(0).Unid;
+    	int id2 = locVars.children.get(2).Unid;
+    	int id3 = locVars.children.get(4).Unid;
+    	tableTest.addReplaceSymbol(id1, locVars.children.get(1).Symbol, locVars.children.get(0).Symbol, null); // add local var 1
+    	tableTest.addReplaceSymbol(id2, locVars.children.get(3).Symbol, locVars.children.get(2).Symbol, null); // add local var 2
+    	tableTest.addReplaceSymbol(id3, locVars.children.get(5).Symbol, locVars.children.get(4).Symbol, null); // add local var 3
+    }
+
+    public static void checkAssigns()
+    {
+    	for (Node cur : assignNodes.values())
+    	{
+    		if (cur.children.get(1).Symbol == "< input") //assign is to user input, add a warning
+    		{
+    			Symbol current = tableTest.getSymbolByName(cur.children.get(0).Symbol); //retrieve the symbol from the table
+    			current.setNote("WARN: Value set by user input, which must match type ("+current.getType()+") or risk a type mismatch.");
+    		}
+    		else if (cur.children.get(1).Symbol == "=")
+    		//assign is to a TERM, aka an ATOMIC, a CALL, or an OP
+    		//- ATOMIC is VNAME or CONST
+    		//- CALL is to a function
+    		//- OP is to UNOP or BINOP
+    		{
+    			Symbol current = tableTest.getSymbolByName(cur.children.get(0).Symbol); //retrieve the symbol from the table
+    			Node term = cur.children.get(2); // the TERM node
+    			switch (term.children.get(0).Symbol) //this is either ATOMIC, CALL, or OP
+    			{
+    			case "ATOMIC":
+    				String type = getTypeAtomic(term.children.get(0));
+    				//System.out.println("case: ATOMIC: type is "+type);
+    				if (current.getType() == type)
+    				{
+    					tableTest.addReplaceSymbol(cur.children.get(2).Unid, current.getName(), type, null);
+    				}
+    				else
+    				{
+    					tableTest.addReplaceSymbol(cur.children.get(2).Unid, current.getName(), type, "WARN: Type violation (new type "+type+", was "+current.getType()+")");
+    				};
+    			break;
+    			case "CALL":
+    				String type2 = getTypeCall(term.children.get(0));
+    				//System.out.println("case: CALL: type is "+type2);
+    				if (current.getType() == type2)
+    				{
+    					tableTest.addReplaceSymbol(cur.children.get(2).Unid, current.getName(), type2, null);
+    				}
+    				else
+    				{
+    					tableTest.addReplaceSymbol(cur.children.get(2).Unid, current.getName(), type2, "WARN: Type violation (new type "+type2+", was "+current.getType()+")");
+    				};
+    			break;
+    			case "OP":
+    				String type3 = getTypeOp(term.children.get(0));
+    				//System.out.println("case: OP: type is "+type3);
+    				if (current.getType() == type3)
+    				{
+    					tableTest.addReplaceSymbol(cur.children.get(2).Unid, current.getName(), type3, null);
+    				}
+    				else
+    				{
+    					tableTest.addReplaceSymbol(cur.children.get(2).Unid, current.getName(), type3, "WARN: Type violation (new type "+type3+", was "+current.getType()+")");
+    				};
+    			break;
+    			}
+    		}
+    		else
+    		{
     		
+    		}
     	}
-		return null;
     }
     
-    public static String classify(Object input) //returns a string of the type of the input
-    { // should only ever receive either numbers or strings
+    public static String getTypeAtomic(Node node) //gets the type of an ATOMIC node, aka either a VNAME or a CONST
+    //'node' is the ATOMIC node
+    {
+    	///System.out.println("Inside getTypeAtomic("+node.Symbol+")");
+    	String type = "ERROR";
+    	if (node.children.get(0).Symbol == "VNAME") //ATOMIC is a variable that exists; get type from symbol table
+    	{
+    		String name = node.children.get(0).children.get(0).Symbol;
+    		//System.out.println(name);
+    		type = tableTest.getSymbolByName(name).getType();
+    	}
+    	else if (node.children.get(0).Symbol == "CONST") //ATOMIC is a constant: infer its type
+    	{
+    		try
+    		{
+    			int val = -29839;
+    			val = Integer.parseInt(node.children.get(0).children.get(0).Symbol);
+    			if (val != -29839)
+    			{
+    				type = "num";
+    			}
+    		}
+    		catch (Exception e)
+    		{
+    			type = "text";
+    		}
+    	}
+    	
+    	return type;
+    }
+    
+    
+    public static String getTypeCall(Node node) //gets the type of a CALL node, aka the type of its function
+    //'node' is the CALL node
+    {
+    	String type = "ERROR";
+    	String name = node.children.get(0).children.get(0).Symbol; // Symbol of the child of first child, aka symbol of FNAME, aka function name
     	try
     	{
-    		int a = Integer.parseInt((String) input);
-    		return "num";
+        	type = tableTest.getSymbolByName(name).getType();
     	}
     	catch (Exception e)
     	{
-    		return "text";
+    		
+    	}
+    	return type;
+    }
+    
+    public static String getTypeOp(Node node) //gets the type of an OP node, which must be inferred from its arguments
+    //'node' is the OP node, this may involve recursion
+    {
+    	/* UNOP
+    	 * - not does not have a type, it only works for COND
+    	 * - sqrt has a type of num
+    	 * BINOP
+    	 * - or does not have a type
+    	 * - and does not have a type
+    	 * - eq does not have a type
+    	 * - grt, all 
+    	 */
+    	String type = "ERROR";
+    	//System.out.println("Inside getTypeOp("+node.Symbol+")");
+    	Node child = node.children.get(0); //child is either UNOP or BINOP
+    	if (child.Symbol == "UNOP")
+    	{
+    		Node arg = node.children.get(2); //stores the only ARG node
+    		switch (child.children.get(0).Symbol)
+    		{
+    		case "not":
+				
+			break;
+    		case "sqrt":
+    			if (getTypeArg(arg) == "num" || getTypeArg(arg) == "flex")
+				{
+					type = "num";
+				}
+			break;
+    		}
+    	}
+    	else if (child.Symbol == "BINOP")
+    	{
+    		Node arg1 = node.children.get(2); //stores the first ARG node
+    		Node arg2 = node.children.get(4); //stores the second ARG node
+    		//System.out.println("arg1 type: "+getTypeArg(arg1));
+    		//System.out.println("arg2 type: "+getTypeArg(arg2));
+    		//System.out.println(child.children.get(0).Symbol);
+    		switch (child.children.get(0).Symbol)
+    		{
+    		case "or":
+				//not applicable as this is a conditional node
+			break;
+    		case "and":
+    			//not applicable as this is a conditional node
+			break;
+    		case "eq":
+    			//not applicable as this is a conditional node
+			break;
+    		case "grt":
+    			//not applicable as this is a conditional node
+			break;
+			// Mathematical nodes: all arguments must be "num" and it returns a type of "num"
+    		case "add":
+    			if ((getTypeArg(arg1).equals("num") || getTypeArg(arg1).equals("flex")) && (getTypeArg(arg2).equals("num") || getTypeArg(arg2).equals("flex")))
+				{
+					type = "num";
+				}
+			break;
+    		case "sub":
+    			if ((getTypeArg(arg1).equals("num") || getTypeArg(arg1).equals("flex")) && (getTypeArg(arg2).equals("num") || getTypeArg(arg2).equals("flex")))
+				{
+					type = "num";
+				}
+			break;
+    		case "mul":
+    			if ((getTypeArg(arg1).equals("num") || getTypeArg(arg1).equals("flex")) && (getTypeArg(arg2).equals("num") || getTypeArg(arg2).equals("flex")))
+				{
+					type = "num";
+				}
+			break;
+    		case "div":
+    			if ((getTypeArg(arg1).equals("num") || getTypeArg(arg1).equals("flex")) && (getTypeArg(arg2).equals("num") || getTypeArg(arg2).equals("flex")))
+				{
+					type = "num";
+				}
+			break;
+    		}
+    	}
+    	
+    	return type;
+    }
+    
+    public static String getTypeArg(Node node) //gets the type of an ARG node, which must be inferred from its children
+    //'node' is the ARG node, this may involve recursion
+    {
+    	//System.out.println("inside getTypeArg("+node.Symbol+").");
+    	//System.out.println("Child type is "+node.children.get(0).Symbol);
+    	if (node.children.get(0).Symbol == "ATOMIC")
+    	{
+    		return getTypeAtomic(node.children.get(0));
+    	}
+    	else if (node.children.get(0).Symbol == "OP")
+    	{
+    		return getTypeOp(node.children.get(0));
+    	}
+    	else
+    	{
+    		return "ERROR";
     	}
     }
-
+   
     public static void categorizeNodes(Node node, List<innerNode> innerNodes, List<leafNode> leafNodes) {
     	// Check if the current node is an innerNode or a leafNode
         if (node instanceof innerNode inner) {
