@@ -139,7 +139,6 @@ public class codeGenv2 {
                 return findElementByUNID(doc,getChildrenUNIDS(node).get(0)).getElementsByTagName("SYMB").item(0).getTextContent();
             case "ASSIGN":
                 children = getChildrenUNIDS(node);
-                id = 1;
                 if (children.size() == 3) {
                     if (tempVar == "") {
                         tempVar = this.newTempVar();
@@ -149,8 +148,8 @@ public class codeGenv2 {
                     Code += translateNode(children.get(0),doc) + " := " + tempVar;
                     return Code;
                 }else {
-                    translateNode(children.get(0),doc);
-                    translateNode(children.get(id),doc);
+
+                    return translateNode(children.get(1),doc) + translateNode(children.get(0),doc);
                 }
             case "TERM":
                 children = getChildrenUNIDS(node);
@@ -158,7 +157,7 @@ public class codeGenv2 {
                     tempCounter--;
                 }
                 return translateNode(children.get(0),doc);
-            case "&lt input":
+            case "< input":
                 return "INPUT ";
             case "CALL":
                 //TODO
@@ -173,15 +172,35 @@ public class codeGenv2 {
             case "ARG":
                 children = getChildrenUNIDS(node);
                 return translateNode(children.get(0),doc);
+            case "BRANCH":
 
             default:
+                System.out.println(symb);
                 return "";
         }
         return code.toString();
     }
 
     private String translateBINOP(Document doc, List<String> children) {
-        return null;
+        String place1 = newTempVar();
+        String place2 = newTempVar();
+        String place = newTempVar();
+        String code1 = translateNode(children.get(2),doc);
+        String code2 = translateNode(children.get(4),doc);
+        List<String> child = getChildrenUNIDS(findElementByUNID(doc,children.get(0)));
+        String op = findElementByUNID(doc,child.get(0)).getElementsByTagName("SYMB").item(0).getTextContent();
+
+        op = switch (op) {
+            case "eq" -> "=";
+            case "grt" -> ">";
+            case "add" -> "+";
+            case "sub" -> "-";
+            case "mul" -> "*";
+            case "div" -> "/";
+            default -> throw new IllegalArgumentException("Unknown binary operation: " + op);
+        };
+        tempCounter--;
+        return code1 + "\n" + place2 + " := " + code2 + "\n" + place + ":= " + op + "(" + place1 + "," + place2 +  ")";
     }
 
     private String translateUNOP(Document doc, List<String> children) {

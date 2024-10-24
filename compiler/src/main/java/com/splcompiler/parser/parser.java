@@ -222,7 +222,7 @@ public class parser {
         innerNode node = new innerNode(current++, "ASSIGN", parent);
         node.addChild(parseVName(node));
         if (matchIf("< input")) {
-            node.addChild(new leafNode(current++, "< input", node));
+            node.addChild(new leafNode(current++, "&lt; input", node));
         } else if (matchIf("=")) {
             node.addChild(new leafNode(current++, "=", node));
             node.addChild(parseTerm(node));

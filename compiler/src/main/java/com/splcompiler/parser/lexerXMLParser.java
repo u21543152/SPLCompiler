@@ -22,7 +22,7 @@ public class lexerXMLParser {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(inputFile);
             doc.getDocumentElement().normalize();
-
+            System.out.println(doc);
             NodeList tokenList = doc.getElementsByTagName("TOK");
             for (int i = 0; i < tokenList.getLength(); i++) {
                 org.w3c.dom.Node tokenNode = tokenList.item(i);
