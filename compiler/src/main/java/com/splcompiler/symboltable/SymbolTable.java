@@ -10,7 +10,7 @@ public class SymbolTable
 	private int varCount = 1;
 	private int funCount = 1;
 	
-	public static Map<String, String> symbolTable = new HashMap<>();
+	public Map<String, String> symbolTable = new HashMap<>();
 	
 	public class Symbol 
 	{

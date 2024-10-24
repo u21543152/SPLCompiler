@@ -19,56 +19,10 @@ import java.util.Map;
 
 public class codeGenv2 {
 
-    private static final Map<String, String> symbolTable = new HashMap<>();
+    private static Map<String, String> symbolTable = new HashMap<>();
 
-    static {
-        // Populating the symbol table
-        symbolTable.put("V_a", "varA");          // Variable V_a maps to varA
-        symbolTable.put("V_b", "varB");          // Variable V_b maps to varB
-        symbolTable.put("F_foo", "functionFoo"); // Function F_foo maps to functionFoo
-        symbolTable.put("V_var1", "var1");       // Local variable in F_foo
-        symbolTable.put("V_var2", "var2");       // Local variable in F_foo
-        symbolTable.put("V_var3", "var3");       // Local variable in F_foo
-        symbolTable.put("F_bar", "functionBar"); // Function F_bar maps to functionBar
-        symbolTable.put("V_var4", "var4");       // Local variable in F_bar
-        symbolTable.put("V_var5", "var5");       // Local variable in F_bar
-        symbolTable.put("V_var6", "var6");       // Local variable in F_bar
-    }
-    public static void main(String[] args) {
-        codeGenv2 codeGen = new codeGenv2();
-        try {
-            File inputFile = new File("SPLCompiler/compiler/src/main/resources/syntax_tree.xml");
-            if (!inputFile.exists()) {
-                System.out.println("File not found!");
-                return;
-            }
-
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(inputFile);
-            doc.getDocumentElement().normalize();
-
-            // Print out the document element to ensure it's not null
-            Element rootElement = doc.getDocumentElement();
-            if (rootElement != null) {
-                System.out.println("Root element: " + rootElement.getNodeName());
-            } else {
-                System.out.println("Root element is null.");
-            }
-
-            // Translate the root node (starting from ROOT)
-            String code = codeGen.translateNode("0", doc);
-            System.out.println(code);
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            System.out.println("SAXException: " + e.getMessage());
-        } catch (IOException e) {
-            System.out.println("IOException: " + e.getMessage());
-        }
-
-
+    public void setTable(Map<String, String> table){
+        symbolTable = table;
     }
 
     public String translateNode(String UNID, Document doc) {
