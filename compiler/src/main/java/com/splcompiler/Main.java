@@ -106,7 +106,6 @@ public class Main
             //symboliseNodes(root);
             tableTest.printTable();
             FileWriter writer2 = new FileWriter("src/main/resources/symbol_table.txt");
-            writer2.write("test");
             writer2.write(tableTest.getTable());
             writer2.close();
         } catch (Exception e) {
@@ -310,11 +309,12 @@ public class Main
     {
     	for (Node cur : assignNodes.values())
     	{
-    		if (cur.children.get(1).Symbol == "< input") //assign is to user input, add a warning
+    		System.out.println(cur.Symbol + " " + cur.children.get(1).Symbol);
+    		if (cur.children.get(1).Symbol.equals("< input") || cur.children.get(1).Symbol.equals("&lt; input")) //assign is to user input, add a warning
     		{
-                System.out.println("one");
-    			Symbol current = tableTest.getSymbolByName(cur.children.get(0).Symbol); //retrieve the symbol from the table
+    			Symbol current = tableTest.getSymbolByName(cur.children.get(0).children.get(0).Symbol); //retrieve the symbol from the table
     			current.setNote("WARN: Value set by user input, which must match type ("+current.getType()+") or risk a type mismatch.");
+    			System.out.println(current.getNote());
     		}
     		else if (cur.children.get(1).Symbol == "=")
     		//assign is to a TERM, aka an ATOMIC, a CALL, or an OP
